@@ -1,0 +1,15 @@
+Build.PL
+Changes
+lib/File/RandomLine.pm
+LICENSE
+Makefile.PL
+MANIFEST
+META.yml
+README
+t/File_RandomLine.t
+t/longer_test.pt
+t/minimal_test.pt
+t/not_readable.txt
+t/README
+t/testdata.txt
+Todo

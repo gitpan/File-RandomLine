@@ -1,0 +1,21 @@
+--- #YAML:1.0
+name: File-RandomLine
+version: 0.10
+author:
+  - David A Golden <dagolden@cpan.org>
+abstract: Quickly retrieve (nearly) random lines from a file
+license: perl
+requires:
+  Want: 0.08
+  perl: 5.006
+build_requires:
+  File::Spec: 0.87
+  Test::Exception: 0.19
+  Test::MockRandom: 0.93
+  Test::More: 0.53
+  Test::Warn: 0.08
+provides:
+  File::RandomLine:
+    file: lib/File/RandomLine.pm
+    version: 0.10
+generated_by: Module::Build version 0.2606
