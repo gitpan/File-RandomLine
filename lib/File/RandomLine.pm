@@ -3,7 +3,7 @@ use 5.006;
 use strict;
 use warnings;
 use Carp;
-our $VERSION = '0.10';
+our $VERSION = "0.11";
 
 # Required modules
 use Want 'howmany';
@@ -14,15 +14,19 @@ use Want 'howmany';
 
 =head1 NAME
 
-File::RandomLine - Quickly retrieve (nearly) random lines from a file
+File::RandomLine - Retrieve random lines from a file
 
 =head1 SYNOPSIS
 
+  # Fast but biased randomness
   use File::RandomLine;
   my $rl = File::RandomLine->new('/var/log/messages');
   print $rl->next;
   print join("\n",$rl->next(3));
-
+  
+  # Slow but uniform randomness
+  $rl = File::RandomLine->new('/var/log/messages', {algorithm=>"uniform"});
+  
 =head1 DESCRIPTION
 
 This module provides a very fast random-access algorithm to retrieve random
@@ -61,6 +65,9 @@ This module provides some similar behavior to L<File::Random>, but the
 random access algorithm is much faster on large files.  (E.g., it runs
 nearly instantaneously even on 100+ MB log files.)
 
+This module also provides an optional, slower algorithm that returns random lines
+with uniform probability.
+
 =head1 USAGE
 
 =cut
@@ -72,19 +79,48 @@ nearly instantaneously even on 100+ MB log files.)
 =head2 C<new>
 
  $rl = File::RandomLine->new( "filename" );
+ $rl = File::RandomLine->new( "filename", { algorithm => "uniform" } );
 
 Returns a new File::RandomLine object for the given filename.  The filename
-must refer to a readable file.
+must refer to a readable file.  A hash reference may be provided as an 
+optional second argument to specify an algorithm to use.  Currently supported
+algorithms are "fast" (the default) and "uniform".  Under "uniform", the 
+module indexes the entire file before selecting random lines with true uniform
+probability for each line.  This can be significantly slower on large files.
 
 =cut
 
 sub new {
-	my ($class, $filename) = @_;
+	my ($class, $filename, $args) = @_;
     croak "new requires a filename parameter" unless $filename;
+    my $algo = $args->{algorithm};
+    croak "unknown algorithm '$algo'" if $algo && $algo !~ /fast|uniform/i;
     open(my $fh, $filename) or croak "Can't read $filename";
-    return bless( \$fh, ref($class) ? ref($class) : $class );
+    my $line_index = lc $algo eq 'uniform' ? _index_file($fh) : undef ;
+    my $filesize = -s $fh;
+    my $self = { 
+        fh => $fh, 
+        line_index => $line_index, 
+        line_count => $line_index ? scalar @$line_index : undef,
+        filesize => $filesize 
+    };
+    return bless( $self, ref($class) ? ref($class) : $class );
 }
 	
+#--------------------------------------------------------------------------#
+# _index_file
+#--------------------------------------------------------------------------#
+
+sub _index_file {
+    my ($fh) = @_;
+    my @index;
+    while (! eof $fh) {
+        push @index, tell $fh;
+        <$fh>;
+    }
+    return \@index;
+}
+
 #--------------------------------------------------------------------------#
 # next()
 #--------------------------------------------------------------------------#
@@ -117,20 +153,39 @@ sub next {
     carp "Strange call to File::Random->next(): 0 random lines requested"
         if defined($n) and $n == 0;
     $n ||= 1;
-    my $fh = $$self;
-    my $filesize = -s $fh;
     my @sample;
     while (@sample < $n) {
-        seek($fh,int(rand($filesize)),0);
-        <$fh>; # skip this fragment of a line
-        seek($fh,0,0) if eof $fh; # wrap if hit EOF
-        my $line = <$fh>; # get the next line
-        push @sample, $line;
+        push @sample, $self->{line_index} ? $self->_uniform : $self->_fast;
     }
     chomp @sample;
     return wantarray ? @sample : shift @sample;
 }
 
+
+#--------------------------------------------------------------------------#
+# Fast Algorithm
+#--------------------------------------------------------------------------#
+
+sub _fast {
+    my $self = shift;
+    my $fh = $self->{fh};
+    seek($fh,int(rand($self->{filesize})),0);
+    <$fh>; # skip this fragment of a line
+    seek($fh,0,0) if eof $fh; # wrap if hit EOF
+    return scalar <$fh>; # get the next line
+}
+
+#--------------------------------------------------------------------------#
+# Uniform Algorithm
+#--------------------------------------------------------------------------#
+
+sub _uniform {
+    my $self = shift;
+    my $fh = $self->{fh};
+    my $start = $self->{line_index}[int(rand($self->{line_count}))];
+    seek($fh,$start,0);
+    return scalar <$fh>; # get the next line
+}
 
 1; #this line is important and will help the module return a true value
 __END__
@@ -147,7 +202,6 @@ The following commands will build, test, and install this module:
 =head1 BUGS
 
 Please report bugs using the CPAN Request Tracker at 
-
 http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-RandomLine
 
 =head1 AUTHOR

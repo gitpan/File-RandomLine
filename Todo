@@ -1,7 +1,3 @@
 TODO list for Perl module File::RandomLine
 
-- Add an option on import that changes the heuristic from "fast" to "uniform".
-    - Would need to change from scalar ref to hash ref to read and store the
-      file's line index on object creation
-    - Create subs "_fast" and "_uniform" and map "next()" to the right one
-      on import
+- nothing yet

@@ -6,10 +6,12 @@ Makefile.PL
 MANIFEST
 META.yml
 README
-t/File_RandomLine.t
+t/01-fast-algorithm.t
+t/02-uniform-algorithm.t
 t/longer_test.pt
 t/minimal_test.pt
 t/not_readable.txt
 t/README
 t/testdata.txt
+t/testdata2.txt
 Todo

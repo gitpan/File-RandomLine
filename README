@@ -1,12 +1,16 @@
 NAME
-    File::RandomLine - Quickly retrieve (nearly) random lines from a file
+    File::RandomLine - Retrieve random lines from a file
 
 SYNOPSIS
+      # Fast but biased randomness
       use File::RandomLine;
       my $rl = File::RandomLine->new('/var/log/messages');
       print $rl->next;
       print join("\n",$rl->next(3));
-
+  
+      # Slow but uniform randomness
+      $rl = File::RandomLine->new('/var/log/messages', {algorithm=>"uniform"});
+  
 DESCRIPTION
     This module provides a very fast random-access algorithm to retrieve
     random lines from a file. Lines are not retrieved with uniform
@@ -33,12 +37,21 @@ DESCRIPTION
     random access algorithm is much faster on large files. (E.g., it runs
     nearly instantaneously even on 100+ MB log files.)
 
+    This module also provides an optional, slower algorithm that returns
+    random lines with uniform probability.
+
 USAGE
   "new"
      $rl = File::RandomLine->new( "filename" );
+     $rl = File::RandomLine->new( "filename", { algorithm => "uniform" } );
 
     Returns a new File::RandomLine object for the given filename. The
-    filename must refer to a readable file.
+    filename must refer to a readable file. A hash reference may be provided
+    as an optional second argument to specify an algorithm to use. Currently
+    supported algorithms are "fast" (the default) and "uniform". Under
+    "uniform", the module indexes the entire file before selecting random
+    lines with true uniform probability for each line. This can be
+    significantly slower on large files.
 
   "next"
      $line = $rl->next();
@@ -61,7 +74,6 @@ INSTALLATION
 
 BUGS
     Please report bugs using the CPAN Request Tracker at
-
     http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-RandomLine
 
 AUTHOR
