@@ -2,8 +2,10 @@ TEST FILES README
 
 File::RandomLine test files and data:
 
-File_RandomLine.t   -- main test script
-testdata.txt        -- sample data file with 4 lines
+01-fast-algorithm.t -- complete test of default algorithm and error handling
+02-uniform-algorithm.t -- shorter tests of slow, uniform algorithm
+testdata.txt -- sample data file with 4 lines for fast test
+testdata2.txt -- sample data file with 4 very uneven lines for uniform test
 not_readable.txt    -- empty file used for testing unreadable file failure
 
 Two additional files are present -- these were alternate test scripts

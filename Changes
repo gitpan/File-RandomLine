@@ -1,5 +1,8 @@
 Revision history for Perl module File::RandomLine
 
+0.12 Mon Jan 31 23:22:21 EST 2005
+    - fixed up an out of date README in the t directory
+
 0.11 Mon Jan 31 15:14:36 EST 2005
     - added support for optional slow, uniform probability algorithm
 

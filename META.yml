@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: File-RandomLine
-version: 0.11
+version: 0.12
 author:
   - David A Golden <dagolden@cpan.org>
 abstract: Retrieve random lines from a file
@@ -17,5 +17,5 @@ build_requires:
 provides:
   File::RandomLine:
     file: lib/File/RandomLine.pm
-    version: 0.11
+    version: 0.12
 generated_by: Module::Build version 0.2606
