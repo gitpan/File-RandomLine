@@ -6,6 +6,8 @@ Makefile.PL
 MANIFEST
 META.yml
 README
+t/00-pod.t
+t/00-podcover.t
 t/01-fast-algorithm.t
 t/02-uniform-algorithm.t
 t/longer_test.pt

@@ -1,5 +1,8 @@
 Revision history for Perl module File::RandomLine
 
+0.13 Wed Mar  9 06:51:00 EST 2005
+    - added pod and pod coverage tests
+    
 0.12 Mon Jan 31 23:22:21 EST 2005
     - fixed up an out of date README in the t directory
 
