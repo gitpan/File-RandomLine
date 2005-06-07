@@ -1,6 +1,6 @@
---- #YAML:1.0
+---
 name: File-RandomLine
-version: 0.13
+version: 0.14
 author:
   - David A Golden <dagolden@cpan.org>
 abstract: Retrieve random lines from a file
@@ -10,12 +10,14 @@ requires:
   perl: 5.006
 build_requires:
   File::Spec: 0.87
-  Test::Exception: 0.19
-  Test::MockRandom: 0.93
-  Test::More: 0.53
+  Test::Exception: 0.2
+  Test::MockRandom: 0.95
+  Test::More: 0.6
+  Test::Pod: 1.2
+  Test::Pod::Coverage: 1.06
   Test::Warn: 0.08
 provides:
   File::RandomLine:
     file: lib/File/RandomLine.pm
-    version: 0.13
+    version: 0.14
 generated_by: Module::Build version 0.2608
